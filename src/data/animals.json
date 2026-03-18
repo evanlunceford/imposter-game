@@ -47,6 +47,5 @@
   { "word": "snake", "hint": "reptile" },
   { "word": "frog", "hint": "amphibian" },
   { "word": "butterfly", "hint": "insect" },
-  { "word": "bee", "hint": "insect" },
-  { "word": "spider", "hint": "arachnid" }
+  { "word": "bee", "hint": "insect" }
 ]
