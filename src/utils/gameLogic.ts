@@ -47,21 +47,21 @@ export function initGame(players: string[], settings: GameSettings): GameState {
   const word = entry.word;
   const hint = entry.hint;
 
-  // 4. Shuffle players, assign roles
-  const shuffledPlayers = shuffle(players);
+  // 4. Shuffle a copy to randomly assign roles, but keep original player order for traversal
+  const shuffledForRoles = shuffle(players);
 
   let playerData: Array<{ name: string; role: 'imposter' | 'civilian'; word?: string }>;
   let allImpostors: string[];
 
   if (everyoneIsImposter) {
-    playerData = shuffledPlayers.map((name) => ({ name, role: 'imposter' as const }));
-    allImpostors = [...shuffledPlayers];
+    playerData = players.map((name) => ({ name, role: 'imposter' as const }));
+    allImpostors = [...players];
   } else {
-    const impostorCount = Math.min(settings.impostorCount, shuffledPlayers.length - 1);
-    const impostorSet = new Set(shuffledPlayers.slice(0, impostorCount));
-    allImpostors = shuffledPlayers.slice(0, impostorCount);
+    const impostorCount = Math.min(settings.impostorCount, shuffledForRoles.length - 1);
+    const impostorSet = new Set(shuffledForRoles.slice(0, impostorCount));
+    allImpostors = shuffledForRoles.slice(0, impostorCount);
 
-    playerData = shuffledPlayers.map((name) => {
+    playerData = players.map((name) => {
       if (impostorSet.has(name)) {
         return { name, role: 'imposter' as const };
       }
@@ -72,9 +72,9 @@ export function initGame(players: string[], settings: GameSettings): GameState {
   // 5. Build fake imposter map (only when everyone is imposter + impostors know each other)
   const fakeImpostorMap: Record<string, string[]> = {};
   if (everyoneIsImposter && settings.impostorsKnowEachOther) {
-    const fakeCount = Math.min(settings.impostorCount, shuffledPlayers.length - 1);
-    for (const player of shuffledPlayers) {
-      const others = shuffledPlayers.filter((p) => p !== player);
+    const fakeCount = Math.min(settings.impostorCount, players.length - 1);
+    for (const player of players) {
+      const others = players.filter((p) => p !== player);
       fakeImpostorMap[player] = shuffle(others).slice(0, fakeCount);
     }
   }
